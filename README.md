@@ -23,3 +23,12 @@ Dada uma lista de palavras, eliminar todos os mails de um dado endereço que no 
 Eliminar todos os mails de um dado endereço anteriores a uma data dada;
 
 Criar uma listagem com todos os endereços de e-mail oriundos um país dado como parâmetro;
+
+
+# Linguagem Ubíqua
+
+Email - objeto que caracteriza um email contendo endereço de email da origem, endereço de e-mail do destinatário, neste caso sempre o mesmo, título do e-mail, mensagem no corpo do email.
+
+Contato - objeto que caracteriza o cadastro dos contatos contendo endereço de e-mail, nome, telefone, endereço e descrição.
+
+Lista Emails - Um objeto que mantém uma lista dos objetos Email's.
