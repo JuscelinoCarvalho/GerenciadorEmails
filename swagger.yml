@@ -32,6 +32,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/SenderAddress"
         - $ref: "#/components/parameters/ReceiverAddress"
+        - $ref: "#/components/parameters/SubjectContains"
       responses:
         '200':
           $ref: '#/components/responses/GetListOk'
@@ -136,6 +137,12 @@ components:
     ReceiverAddress:
       description: Receiver Address to fetch
       name: receiver_address
+      in: query
+      schema:
+        type: string
+    SubjectContains:
+      description: Subject contains to fetch
+      name: subject_contains
       in: query
       schema:
         type: string
