@@ -1,0 +1,30 @@
+###
+Entidade Email
++ id_email: int
++ assunto: string
++ data_hora: datetime
++ conteudo: string
++ remetente: Contato
++ lista_destinatarios: List<Contato>
++ lista_anexos: List<Anexo>
+
+###
+Entidade Contato
++ id_contato: int
++ nome: string
++ endereco: string
+
+###
+Entidade Anexo
++ id_anexo: int
++ tipo: string
++ conteudo: blob
+
+###
+Métodos
++ SalvarEmail(Email email): boolean
++ ContarTodos(): int
++ ListarTodos(): List<Email>
++ ContarPorRemetente(string endereco): int
++ ListarPorRemetente(string endereco): List<Email>
++ ListarContemAssunto(string parteAssunto): List<Email>
