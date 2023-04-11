@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: ADA Mail Management
+servers:
+  - url: "https://f1rst.ada.com/mail_project"
+paths:
+  /api/email/save:
+    post:
+      tags:
+        - Email Management
+      summary: Authenticate a User
+      requestBody:
+        $ref: "#/components/requestBodies/PostEmail"
+      responses:
+        '200':
+          $ref: '#/components/responses/PostEmailOk'
+  /api/email/count:
+    get:
+      tags:
+        - Email Management
+      parameters:
+        - $ref: "#/components/parameters/SenderAddress"
+        - $ref: "#/components/parameters/ReceiverAddress"
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCountOk'
+  /api/email/list:
+    get:
+      tags:
+        - Email Management
+      parameters:
+        - $ref: "#/components/parameters/SenderAddress"
+        - $ref: "#/components/parameters/ReceiverAddress"
+        - $ref: "#/components/parameters/SubjectContains"
+      responses:
+        '200':
+          $ref: '#/components/responses/GetListOk'
+components:
+  schemas:
+    Created:
+      type: object
+      properties:
+        new_id:
+          type: number
+    Contact:
+      type: object
+      required:
+        - nome
+        - endereco
+      properties:
+        id_anexo:
+          type: number
+        nome:
+          type: string
+        endereco:
+          type: string
+    Attachment:
+      type: object
+      required:
+        - tipo
+        - conteudo
+      properties:
+        id_anexo:
+          type: number
+        tipo:
+          type: string
+        conteudo:
+          type: string
+    Email:
+      type: object
+      required:
+        - assunto
+        - data_hora
+        - remetente
+        - lista_destinatarios
+      properties:
+        id_email:
+          type: number
+        assunto:
+          type: string
+        data_hora:
+          type: string
+        conteudo:
+          type: string
+        remetente:
+          type: string
+        lista_destinatarios:
+          type: array
+          items:
+            $ref: "#/components/schemas/Contact"
+        lista_anexos:
+          type: array
+          items:
+            $ref: "#/components/schemas/Attachment"
+    Count:
+      type: object
+      properties:
+        quantity:
+          type: number
+    Emails:
+      type: array
+      items:
+        $ref: "#/components/schemas/Email"
+  requestBodies:
+    PostEmail:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Email"
+  responses:
+    PostEmailOk:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Created"
+    GetCountOk:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Count"
+    GetListOk:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Emails"
+  parameters:
+    SenderAddress:
+      description: Sender Address to fetch
+      name: sender_address
+      in: query
+      schema:
+        type: string
+    ReceiverAddress:
+      description: Receiver Address to fetch
+      name: receiver_address
+      in: query
+      schema:
+        type: string
+    SubjectContains:
+      description: Subject contains to fetch
+      name: subject_contains
+      in: query
+      schema:
+        type: string
