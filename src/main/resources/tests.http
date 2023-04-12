@@ -1,0 +1,53 @@
+GET http://localhost:8080/mail_project/api/email
+Accept: application/json
+
+###
+GET http://localhost:8080/mail_project/api/email?subject_contains=assunto
+Accept: application/json
+
+###
+POST http://localhost:8080/mail_project/api/email
+Accept: application/json
+Content-Type: application/json
+
+{
+  "assunto": "string",
+  "conteudo": "string",
+  "data_hora": "string",
+  "id_email": 0,
+  "lista_anexos": [
+    {
+      "conteudo": "string",
+      "descricao": "string",
+      "id_anexo": 0,
+      "nome": "string",
+      "tamanho": "string",
+      "tipo": "string"
+    }
+  ],
+  "lista_destinatarios": [
+    {
+      "email": "string",
+      "endereco": "string",
+      "id_anexo": 0,
+      "nome": "string",
+      "sexo": "string",
+      "telefone": "string"
+    }
+  ],
+  "remetente": "string"
+}
+
+###
+DELETE http://localhost:8080/mail_project/api/email?subject_contains=assunto
+Accept: application/json
+
+###
+GET http://localhost:8080/mail_project/api/email/0.8008281904610115
+Accept: application/json
+
+###
+GET http://localhost:8080/mail_project/api/email/count
+Accept: application/json
+
+###
