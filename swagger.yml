@@ -5,27 +5,7 @@ info:
 servers:
   - url: "https://f1rst.ada.com/mail_project"
 paths:
-  /api/email/save:
-    post:
-      tags:
-        - Email Management
-      summary: Authenticate a User
-      requestBody:
-        $ref: "#/components/requestBodies/PostEmail"
-      responses:
-        '200':
-          $ref: '#/components/responses/PostEmailOk'
-  /api/email/count:
-    get:
-      tags:
-        - Email Management
-      parameters:
-        - $ref: "#/components/parameters/SenderAddress"
-        - $ref: "#/components/parameters/ReceiverAddress"
-      responses:
-        '200':
-          $ref: '#/components/responses/GetCountOk'
-  /api/email/list:
+  /api/email:
     get:
       tags:
         - Email Management
@@ -33,9 +13,70 @@ paths:
         - $ref: "#/components/parameters/SenderAddress"
         - $ref: "#/components/parameters/ReceiverAddress"
         - $ref: "#/components/parameters/SubjectContains"
+        - $ref: "#/components/parameters/ReceivedDate"
       responses:
         '200':
           $ref: '#/components/responses/GetListOk'
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Email Management
+      parameters:
+        - $ref: "#/components/parameters/SenderAddress"
+        - $ref: "#/components/parameters/ReceiverAddress"
+        - $ref: "#/components/parameters/SubjectContains"
+        - $ref: "#/components/parameters/ReceivedDate"
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Email Management
+      requestBody:
+        $ref: "#/components/requestBodies/PostEmail"
+      responses:
+        '200':
+          $ref: '#/components/responses/PostEmailOk'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/email/{id_email}:
+    get:
+      tags:
+        - Email Management
+      parameters:
+        - $ref: "#/components/parameters/IdEmail"
+      responses:
+        '200':
+          $ref: '#/components/responses/GetEmailOk'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/email/count:
+    get:
+      tags:
+        - Email Management
+      parameters:
+        - $ref: "#/components/parameters/SenderAddress"
+        - $ref: "#/components/parameters/ReceiverAddress"
+        - $ref: "#/components/parameters/SubjectContains"
+        - $ref: "#/components/parameters/ReceivedDate"
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCountOk'
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 components:
   schemas:
     Created:
@@ -47,11 +88,17 @@ components:
       type: object
       required:
         - nome
-        - endereco
+        - email
       properties:
         id_anexo:
           type: number
         nome:
+          type: string
+        email:
+          type: string
+        sexo:
+          type: string
+        telefone:
           type: string
         endereco:
           type: string
@@ -59,13 +106,21 @@ components:
       type: object
       required:
         - tipo
+        - nome
         - conteudo
+        - tamanho
       properties:
         id_anexo:
           type: number
         tipo:
           type: string
+        nome:
+          type: string
         conteudo:
+          type: string
+        tamanho:
+          type: string
+        descricao:
           type: string
     Email:
       type: object
@@ -102,6 +157,15 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/Email"
+    Error:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        errorMessage:
+          type: string
+        errorDetail:
+          type: string
   requestBodies:
     PostEmail:
       content:
@@ -115,6 +179,12 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Created"
+    GetEmailOk:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Email"
     GetCountOk:
       description: OK
       content:
@@ -127,6 +197,30 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Emails"
+    NoContent:
+      description: No Content
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
   parameters:
     SenderAddress:
       description: Sender Address to fetch
@@ -146,3 +240,16 @@ components:
       in: query
       schema:
         type: string
+    ReceivedDate:
+      description: Received on the date
+      name: received_date
+      in: query
+      schema:
+        type: number
+    IdEmail:
+      description: Email identifier
+      name: id_email
+      in: path
+      required: true
+      schema:
+        type: number
