@@ -32,3 +32,91 @@ Email - objeto que caracteriza um email contendo endereço de email da origem, e
 Contato - objeto que caracteriza o cadastro dos contatos contendo endereço de e-mail, nome, telefone, endereço e descrição.
 
 Lista Emails - Um objeto que mantém uma lista dos objetos Email's.
+
+# ADA Mail Management
+## Version: 1.0.0
+
+### /api/email
+
+#### GET
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+|  |  |  | No | [SenderAddress](#SenderAddress) |
+|  |  |  | No | [ReceiverAddress](#ReceiverAddress) |
+|  |  |  | No | [SubjectContains](#SubjectContains) |
+|  |  |  | No | [ReceivedDate](#ReceivedDate) |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 |  |
+| 204 |  |
+| 500 |  |
+
+#### DELETE
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+|  |  |  | No | [SenderAddress](#SenderAddress) |
+|  |  |  | No | [ReceiverAddress](#ReceiverAddress) |
+|  |  |  | No | [SubjectContains](#SubjectContains) |
+|  |  |  | No | [ReceivedDate](#ReceivedDate) |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 |  |
+| 404 |  |
+| 500 |  |
+
+#### POST
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 |  |
+| 400 |  |
+| 500 |  |
+
+### /api/email/{id_email}
+
+#### GET
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+|  |  |  | No | [IdEmail](#IdEmail) |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 |  |
+| 404 |  |
+| 500 |  |
+
+### /api/email/count
+
+#### GET
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+|  |  |  | No | [SenderAddress](#SenderAddress) |
+|  |  |  | No | [ReceiverAddress](#ReceiverAddress) |
+|  |  |  | No | [SubjectContains](#SubjectContains) |
+|  |  |  | No | [ReceivedDate](#ReceivedDate) |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 |  |
+| 204 |  |
+| 500 |  |
+
