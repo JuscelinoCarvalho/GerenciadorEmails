@@ -1,17 +1,18 @@
 package io.swagger.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.model.Attachment;
-import io.swagger.model.Contact;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.Objects;
 
 /**
  * Email
@@ -19,8 +20,23 @@ import javax.validation.constraints.*;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2023-04-12T22:46:14.551837857Z[GMT]")
 
+@Getter
+@Setter
+public abstract class Email {
 
-public class Email   {
+
+  private LocalDateTime dataEnvio;
+  private LocalDateTime dataRecebimento;
+
+  public Email(String remetente, LocalDateTime dataEnvio, LocalDateTime dataRecebimento, String assunto, String corpo) {
+    this.remetente = remetente;
+    this.dataEnvio = dataEnvio;
+    this.dataRecebimento = dataRecebimento;
+    this.assunto = assunto;
+    this.conteudo = getConteudo();
+  }
+
+
   @JsonProperty("id_email")
   private BigDecimal idEmail = null;
 
@@ -49,12 +65,7 @@ public class Email   {
     return this;
   }
 
-  /**
-   * Get idEmail
-   * @return idEmail
-   **/
   @Schema(description = "")
-  
     @Valid
     public BigDecimal getIdEmail() {
     return idEmail;
@@ -69,13 +80,8 @@ public class Email   {
     return this;
   }
 
-  /**
-   * Get assunto
-   * @return assunto
-   **/
   @Schema(required = true, description = "")
       @NotNull
-
     public String getAssunto() {
     return assunto;
   }
@@ -89,10 +95,6 @@ public class Email   {
     return this;
   }
 
-  /**
-   * Get dataHora
-   * @return dataHora
-   **/
   @Schema(required = true, description = "")
       @NotNull
 
@@ -109,10 +111,6 @@ public class Email   {
     return this;
   }
 
-  /**
-   * Get conteudo
-   * @return conteudo
-   **/
   @Schema(description = "")
   
     public String getConteudo() {
@@ -128,10 +126,6 @@ public class Email   {
     return this;
   }
 
-  /**
-   * Get remetente
-   * @return remetente
-   **/
   @Schema(required = true, description = "")
       @NotNull
 
@@ -153,10 +147,6 @@ public class Email   {
     return this;
   }
 
-  /**
-   * Get listaDestinatarios
-   * @return listaDestinatarios
-   **/
   @Schema(required = true, description = "")
       @NotNull
     @Valid
@@ -181,10 +171,6 @@ public class Email   {
     return this;
   }
 
-  /**
-   * Get listaAnexos
-   * @return listaAnexos
-   **/
   @Schema(description = "")
       @Valid
     public List<Attachment> getListaAnexos() {
