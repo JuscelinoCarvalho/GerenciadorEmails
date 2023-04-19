@@ -86,7 +86,7 @@ components:
         - nome
         - email
       properties:
-        id_anexo:
+        id_contato:
           description: Internal Identification
           example: 1
           type: number
@@ -154,8 +154,12 @@ components:
           description: Subject of the email
           example: Hello World!
           type: string
-        data_hora:
+        data_hora_recebimento:
           description: Date and time of the arrival
+          example: 2023-04-14T20:04:16.123Z
+          type: string
+        data_hora_envio:
+          description: Date and time of the departure
           example: 2023-04-14T20:04:16.123Z
           type: string
         conteudo:

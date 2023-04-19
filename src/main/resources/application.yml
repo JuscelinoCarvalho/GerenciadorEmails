@@ -1,0 +1,17 @@
+
+spring:
+  jackson:
+    date-format: br.com.ada.f1rst.mail.configuration.RFC3339DateFormat
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /mail_project
+
+springfox:
+  documentation:
+    open-api:
+      v3:
+        path: /api-docs
