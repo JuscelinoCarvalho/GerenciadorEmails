@@ -4,9 +4,6 @@ import br.com.ada.f1rst.mail.model.Created;
 import br.com.ada.f1rst.mail.model.Email;
 import br.com.ada.f1rst.mail.model.Emails;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 /**
  * Cada e-mail recebido numa dada conta de e-mail é guardado contendo o endereço de quem o enviou, a data de envio, a data de recebimento, o assunto e o texto do e-mail (não se consideram anexos, etc.).
  * Crie uma classe MailMap que associe a cada endereço de envio todos os mails recebidos (classe EMail) e implemente as seguintes operações:

@@ -3,18 +3,16 @@ package br.com.ada.f1rst.mail.service.impl;
 import br.com.ada.f1rst.mail.model.Created;
 import br.com.ada.f1rst.mail.model.Email;
 import br.com.ada.f1rst.mail.model.Emails;
-import br.com.ada.f1rst.mail.model.MailMap;
 import br.com.ada.f1rst.mail.service.MailService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import redis.clients.jedis.Jedis;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,12 +24,26 @@ public class MailServiceImpl implements MailService {
     public Emails listarEmails(String senderAddress, String receiverAddress, String subjectContains, String receivedDate) {
         Emails emails = Emails.builder().build();
 
-        emails.addAll(mailTable.stream()
-                .filter(m -> senderAddress == null || (senderAddress != null && m.getRemetente().equalsIgnoreCase(senderAddress)))
-                .filter(m -> receiverAddress == null || (receiverAddress != null && m.getListaDestinatarios().stream().anyMatch(c -> c.getEmail().equalsIgnoreCase(receiverAddress))))
-                .filter(m -> subjectContains == null || (subjectContains != null && m.getAssunto().contains(subjectContains)))
-                .filter(m -> receivedDate == null || (receivedDate != null && m.getDataHoraRecebimento().toLocalDate().isEqual(LocalDate.parse(receivedDate))))
-                .collect(Collectors.toList()));
+        try (Jedis jedis = new Jedis("localhost")) {
+            String key = "emails_com_palavras_no_assunto";
+
+            if (!jedis.exists(key)) {
+                for (Email e : mailTable.stream()
+                        .filter(m -> senderAddress == null || (senderAddress != null && m.getRemetente().equalsIgnoreCase(senderAddress)))
+                        .filter(m -> receiverAddress == null || (receiverAddress != null && m.getListaDestinatarios().stream().anyMatch(c -> c.getEmail().equalsIgnoreCase(receiverAddress))))
+                        .filter(m -> subjectContains == null || (subjectContains != null && m.getAssunto().contains(subjectContains)))
+                        .filter(m -> receivedDate == null || (receivedDate != null && m.getDataHoraRecebimento().toLocalDate().isEqual(LocalDate.parse(receivedDate))))
+                        .collect(Collectors.toList())) {
+                    jedis.sadd(key, e.toString());
+                }
+            }
+
+            Set<String> emailStrings = jedis.smembers(key);
+
+            for (String emailString : emailStrings) {
+                emails.add(Email.fromString(emailString));
+            }
+        }
 
         return emails;
     }
