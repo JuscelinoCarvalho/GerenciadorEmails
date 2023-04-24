@@ -1,6 +1,7 @@
 package br.com.f1rst.ada.mail.project.model;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class EMail implements Comparable<EMail> {
 
@@ -19,6 +20,10 @@ public class EMail implements Comparable<EMail> {
         this.dataRecebimento = dataRecebimento;
         this.assunto = assunto;
         this.corpo = corpo;
+    }
+
+    public EMail(String remetente, Date dataEnvio, Date dataRecebimento, String assunto, String corpo) {
+
     }
 
     public String getRemetente() {
@@ -60,9 +65,18 @@ public class EMail implements Comparable<EMail> {
     public void setCorpo(String corpo) {
         this.corpo = corpo;
     }
+    public static EMail fromString(String emailString) {
+        String[] parts = emailString.split("\\|");
+        String remetente = parts[0];
+        String assunto = parts[1];
+        String corpo = parts[2];
+        Date dataEnvio = new Date(Long.parseLong(parts[3]));
+        Date dataRecebimento = new Date(Long.parseLong(parts[4]));
+
+        return new EMail(remetente, dataEnvio, dataRecebimento, assunto, corpo);
+    }
 
     @Override
     public int compareTo(EMail o) {
-        return o.getRemetente().compareTo(this.remetente);
-    }
-}
+        return this.remetente.compareTo(o.getRemetente());
+    }}
