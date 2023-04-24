@@ -7,6 +7,7 @@ import br.com.ada.f1rst.mail.service.MailService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 
 import java.time.LocalDate;
@@ -24,17 +25,13 @@ public class MailServiceImpl implements MailService {
     public Emails listarEmails(String senderAddress, String receiverAddress, String subjectContains, String receivedDate) {
         Emails emails = Emails.builder().build();
 
-        try (Jedis jedis = new Jedis("localhost")) {
+        try (Jedis jedis = new Jedis(HostAndPort.from("localhost:6379"))) {
             String key = "emails_com_palavras_no_assunto";
 
-            if (!jedis.exists(key)) {
-                for (Email e : mailTable.stream()
-                        .filter(m -> senderAddress == null || (senderAddress != null && m.getRemetente().equalsIgnoreCase(senderAddress)))
-                        .filter(m -> receiverAddress == null || (receiverAddress != null && m.getListaDestinatarios().stream().anyMatch(c -> c.getEmail().equalsIgnoreCase(receiverAddress))))
-                        .filter(m -> subjectContains == null || (subjectContains != null && m.getAssunto().contains(subjectContains)))
-                        .filter(m -> receivedDate == null || (receivedDate != null && m.getDataHoraRecebimento().toLocalDate().isEqual(LocalDate.parse(receivedDate))))
-                        .collect(Collectors.toList())) {
+            if (Boolean.FALSE.equals(jedis.exists(key))) {
+                for (Email e : filterTable(senderAddress, receiverAddress, subjectContains, receivedDate)) {
                     jedis.sadd(key, e.toString());
+                    jedis.expire(key, (long) 60 * 60 * 1000);
                 }
             }
 
@@ -43,9 +40,21 @@ public class MailServiceImpl implements MailService {
             for (String emailString : emailStrings) {
                 emails.add(Email.fromString(emailString));
             }
+        } catch (Exception e) {
+            // Whenever there is NO cache (being it absence of the Redis or even when an error occurs)
+            emails.addAll(filterTable(senderAddress, receiverAddress, subjectContains, receivedDate));
         }
 
         return emails;
+    }
+
+    private List<Email> filterTable(String senderAddress, String receiverAddress, String subjectContains, String receivedDate) {
+        return mailTable.stream()
+                .filter(m -> senderAddress == null || (senderAddress != null && m.getRemetente().equalsIgnoreCase(senderAddress)))
+                .filter(m -> receiverAddress == null || (receiverAddress != null && m.getListaDestinatarios().stream().anyMatch(c -> c.getEmail().equalsIgnoreCase(receiverAddress))))
+                .filter(m -> subjectContains == null || (subjectContains != null && m.getAssunto().contains(subjectContains)))
+                .filter(m -> receivedDate == null || (receivedDate != null && m.getDataHoraRecebimento().toLocalDate().isEqual(LocalDate.parse(receivedDate))))
+                .collect(Collectors.toList());
     }
 
     @Override
