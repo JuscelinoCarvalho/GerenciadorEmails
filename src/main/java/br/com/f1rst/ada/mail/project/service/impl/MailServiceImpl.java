@@ -3,7 +3,8 @@ package br.com.f1rst.ada.mail.project.service.impl;
 import br.com.f1rst.ada.mail.project.model.EMail;
 import br.com.f1rst.ada.mail.project.model.MailMap;
 import br.com.f1rst.ada.mail.project.service.MailService;
-
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.params.SetParams;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -65,25 +66,40 @@ public class MailServiceImpl implements MailService {
 	public Set<EMail> obterEmailsComPalavrasNoAssunto(String... argumentos) {
 		Set<EMail> emails = new TreeSet<>();
 
-		for (Map.Entry<String, List<EMail>> email : mailMap.entrySet()) {
-			for (EMail e : email.getValue()) {
-				boolean include = true;
+		try (Jedis jedis = new Jedis("localhost")) {
+			String key = "emails_com_palavras_no_assunto";
 
-				for (String s : argumentos) {
-					if (!e.getAssunto().toLowerCase().contains(s.toLowerCase())) {
-						include = false;
-						break;
+			if (!jedis.exists(key)) {
+				for (Map.Entry<String, List<EMail>> email : mailMap.entrySet()) {
+					for (EMail e : email.getValue()) {
+						boolean include = true;
+
+						for (String s : argumentos) {
+							if (!e.getAssunto().toLowerCase().contains(s.toLowerCase())) {
+								include = false;
+								break;
+							}
+						}
+
+						if (include) {
+							jedis.sadd(key, e.toString());
+						}
 					}
 				}
 
-				if (include) {
-					emails.add(e);
-				}
+				jedis.expire(key, 60 * 60); // expira após 1 hora
+			}
+
+			Set<String> emailStrings = jedis.smembers(key);
+
+			for (String emailString : emailStrings) {
+				emails.add(EMail.fromString(emailString));
 			}
 		}
 
 		return emails;
 	}
+
 
 	@Override
 	public int removerEmailsAntesDe(LocalDateTime dataHora) {
